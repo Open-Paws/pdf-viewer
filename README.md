@@ -32,8 +32,8 @@ This project provides a simple API that takes a PDF URL and returns the PDF cont
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pdf-viewer.git
-   cd pdf-viewer
+   git clone https://github.com/yourusername/pdf-viewer-proxy.git
+   cd pdf-viewer-proxy
    ```
 
 3. Create a virtual environment (optional but recommended):
