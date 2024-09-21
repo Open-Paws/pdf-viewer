@@ -35,12 +35,22 @@ async def serve_pdf(url: str):
             response = requests.get(url, headers=headers, allow_redirects=True)
             response.raise_for_status()
 
-            # Check if the content type is PDF
+            # Check if the content type is PDF or potentially a PDF
             content_type = response.headers.get("Content-Type", "").lower()
-            if "application/pdf" in content_type:
-                # If it's a PDF, return it as a streaming response
+            if (
+                "application/pdf" in content_type
+                or "binary/octet-stream" in content_type
+            ):
+                # If it's a PDF or binary data, we'll try to determine if it's actually a PDF
                 pdf_content = BytesIO(response.content)
-                return StreamingResponse(pdf_content, media_type="application/pdf")
+
+                # Check for PDF signature in the first few bytes
+                pdf_signature = b"%PDF-"
+                if pdf_content.getvalue().startswith(pdf_signature):
+                    return StreamingResponse(pdf_content, media_type="application/pdf")
+                else:
+                    # If it's not actually a PDF, redirect to the original URL
+                    return RedirectResponse(url=url)
             else:
                 # If not a PDF, redirect to the original URL
                 return RedirectResponse(url=url)
