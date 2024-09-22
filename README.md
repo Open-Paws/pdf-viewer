@@ -81,6 +81,15 @@ proxy_url = add_proxy(url)
 print(proxy_url)
 ```
 
+### More Thorough Testing
+
+Activate the **virtual environment** and run the test file:
+```bash
+python test_main.py # Note this is a simple test to see what kinds of responses the server will give for the provided links
+```
+
+If you want to check any of the proxy links provided in the test output manually, you need to run the main server first, using [Running the Application](#running-the-application).
+
 ## API Endpoints
 
 ### GET /pdf
