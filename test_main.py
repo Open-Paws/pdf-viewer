@@ -56,7 +56,8 @@ URL_VARIANTS = {
     ],
     # Expecting proxy to redirect to original URL
     "Domain Not Found": [
-        "https://www.ejast.org/download/download_pdf?pid=jast-62-1-64"
+        "https://www.ejast.org/download/download_pdf?pid=jast-62-1-64",  # Unstable link, sometimes found sometimes not found
+        "https://www.123901230912830123239929210.com/download_pdf?pid=jast-62-1-64",  # Made up URL
     ],
 }
 
