@@ -1,10 +1,12 @@
 from colorama import Fore, Style, init
 import logging
 from urllib.parse import quote
+from fastapi.testclient import TestClient
+from main import app
 
 init(autoreset=True)
 
-# client = TestClient(app)
+client = TestClient(app)
 
 URL_VARIANTS = {
     # Expecting proxy to return PDF content
@@ -81,5 +83,36 @@ def test_add_proxy():
     )
 
 
+def basic_test():
+    for category, urls in URL_VARIANTS.items():
+        print(f"\n{Fore.CYAN}Testing category: {category}{Style.RESET_ALL}")
+        for index, url in enumerate(urls):
+            proxied_url = add_proxy(url, index)
+            try:
+                response = client.get(f"/pdf?url={quote(url)}", allow_redirects=False)
+                # Create a clickable link using ANSI escape sequences
+                proxy_link = f"\033]8;;{proxied_url}\033\\Proxy URL\033]8;;\033\\"
+                if response.status_code == 200:
+                    content_type = response.headers.get("Content-Type", "")
+                    if "application/pdf" in content_type:
+                        print(
+                            f"{proxy_link} {Fore.GREEN}✓ Streaming PDF: {url}{Style.RESET_ALL}"
+                        )
+                    else:
+                        print(
+                            f"{proxy_link} {Fore.YELLOW}? Unexpected content type: {content_type} for {url}{Style.RESET_ALL}"
+                        )
+                elif response.status_code == 307:  # Temporary Redirect
+                    print(f"{proxy_link} {Fore.BLUE}→ Redirect: {url}{Style.RESET_ALL}")
+                else:
+                    print(
+                        f"{proxy_link} {Fore.RED}✗ Unexpected status code {response.status_code}: {url}{Style.RESET_ALL}"
+                    )
+            except Exception as e:
+                print(
+                    f"{proxy_link} {Fore.RED}✗ Error: {str(e)} for {url}{Style.RESET_ALL}"
+                )
+
+
 if __name__ == "__main__":
-    pass
+    basic_test()
